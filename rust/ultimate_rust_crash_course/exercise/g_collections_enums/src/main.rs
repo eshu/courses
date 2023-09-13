@@ -30,7 +30,7 @@ impl Shot {
         match *self {
             Shot::Bullseye => 5,
             Shot::Hit(d) if d < 3.0 => 2,
-            Shot::Hit(d) => 1 ,
+            Shot::Hit(d) => 1,
             Shot::Miss => 0
         }
     }
@@ -51,9 +51,11 @@ fn main() {
     //      - Greater than 5.0 -- `Shot::Miss`
     for coords in arrow_coords.iter() {
         coords.print_description();
-        let d = coords.distance_from_center();
-        shots.push(
-            if d < 1.0 { Shot::Bullseye } else if d > 5.0 { Shot::Miss } else { Shot::Hit(d) })
+        shots.push(match coords.distance_from_center() {
+            d if d < 1.0 => Shot::Bullseye,
+            d if d > 5.0 => Shot::Miss,
+            d => Shot::Hit(d)
+        })
     }
 
     fn shots2(arrow_coords_iter: Iter<Coord>) -> Map<Iter<Coord>, fn(&Coord) -> Shot> {
