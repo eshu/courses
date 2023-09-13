@@ -50,6 +50,7 @@ fn main() {
     //      - Between 1.0 and 5.0 -- `Shot::Hit(value)`
     //      - Greater than 5.0 -- `Shot::Miss`
     for coords in arrow_coords.iter() {
+        coords.print_description();
         let d = coords.distance_from_center();
         shots.push(
             if d < 1.0 { Shot::Bullseye } else if d > 5.0 { Shot::Miss } else { Shot::Hit(d) })
@@ -57,6 +58,7 @@ fn main() {
 
     fn shots2(arrow_coords_iter: Iter<Coord>) -> Map<Iter<Coord>, fn(&Coord) -> Shot> {
         arrow_coords_iter.map(|coords| {
+            coords.print_description();
             let d = coords.distance_from_center();
             if d < 1.0 { Shot::Bullseye } else if d > 5.0 { Shot::Miss } else { Shot::Hit(d) }
         })
