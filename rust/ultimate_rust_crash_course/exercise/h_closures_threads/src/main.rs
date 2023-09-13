@@ -1,7 +1,6 @@
 // Silence some warnings so they don't distract from the exercise.
-#![allow(dead_code, unused_imports, unused_variables)]
+// #![allow(dead_code, unused_imports, unused_variables)]
 
-use std::sync::mpsc::channel;
 use crossbeam::channel;
 use std::thread;
 use std::time::Duration;
@@ -37,7 +36,7 @@ fn main() {
     let handle = thread::spawn(move || expensive_sum(my_vector));
 
     // While the child thread is running, the main thread will also do some work
-    for letter in vec!["a", "b", "c", "d", "e", "f"] {
+    for letter in ["a", "b", "c", "d", "e", "f"] {
         println!("Main thread: Letter {}", letter);
         pause_ms(200);
     }
