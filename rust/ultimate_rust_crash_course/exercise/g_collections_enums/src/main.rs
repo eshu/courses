@@ -10,14 +10,28 @@
 //
 // You will need to complete 1b as well before you will be able to run this program successfully.
 
+use std::iter::Map;
+use std::slice::Iter;
+
+enum Shot {
+    Bullseye,
+    Hit(f64),
+    Miss,
+}
+
 impl Shot {
     // Here is a method for the `Shot` enum you just defined.
-    fn points(self) -> i32 {
+    fn points(&self) -> i32 {
         // 1b. Implement this method to convert a Shot into points
         // - return 5 points if `self` is a `Shot::Bullseye`
         // - return 2 points if `self` is a `Shot::Hit(x)` where x < 3.0
         // - return 1 point if `self` is a `Shot::Hit(x)` where x >= 3.0
         // - return 0 points if `self` is a Miss
+        match *self {
+            Shot::Bullseye => 5,
+            Shot::Hit(d) => if d < 3.0 { 2 } else { 1 },
+            Shot::Miss => 0
+        }
     }
 }
 
@@ -34,12 +48,33 @@ fn main() {
     //      - Less than 1.0 -- `Shot::Bullseye`
     //      - Between 1.0 and 5.0 -- `Shot::Hit(value)`
     //      - Greater than 5.0 -- `Shot::Miss`
+    for coords in arrow_coords.iter() {
+        let d = coords.distance_from_center();
+        shots.push(
+            if d < 1.0 { Shot::Bullseye } else if d > 5.0 { Shot::Miss } else { Shot::Hit(d) })
+    }
 
+    fn shots2(arrow_coords_iter: Iter<Coord>) -> Map<Iter<Coord>, fn(&Coord) -> Shot> {
+        arrow_coords_iter.map(|coords| {
+            let d = coords.distance_from_center();
+            if d < 1.0 { Shot::Bullseye } else if d > 5.0 { Shot::Miss } else { Shot::Hit(d) }
+        })
+    }
 
     let mut total = 0;
     // 3. Finally, loop through each shot in shots and add its points to total
+    for shot in shots {
+        total += shot.points()
+    }
+
+    let total2 = shots2(arrow_coords.iter()).fold(0, |t, shot| t + shot.points());
+    let total3 = shots2(arrow_coords.iter()).map(|shot| shot.points()).sum();
 
     println!("Final point total is: {}", total);
+    println!("Final point total (2) is: {}", total2);
+    println!("Final point total (3) is: {}", total2);
+    assert_eq!(total, total2);
+    assert_eq!(total, total3);
 }
 
 // A coordinate of where an Arrow hit
@@ -60,7 +95,6 @@ impl Coord {
             self.x,
             self.y);
     }
-
 }
 
 // Generate some random coordinates
